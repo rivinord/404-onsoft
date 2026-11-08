@@ -101,7 +101,7 @@ flowchart TD
 ## 📁 Структура проекта
 
 ```text
-team404-onsoft-solution/
+404-onsoft/
 ├── solution.py                 # Каноническая точка входа (make run)
 ├── solution_dual_stream.py      # Ядро Dual-Stream конвейера и критики
 ├── gigachat_client.py          # Авторизация и отказоустойчивый клиент к GigaChat
