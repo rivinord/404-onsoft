@@ -1,0 +1,27 @@
+# Environment variables and secrets (NEVER COMMIT)
+.env
+.env.*
+!.env.example
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# Temporary uploads and outputs
+uploads/
+*.tmp
