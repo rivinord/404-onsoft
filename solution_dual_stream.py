@@ -592,6 +592,18 @@ def resolve_consensus(q_text, docs, full_text, ext_item, nli_item):
 
     # 1. Междокументное расхождение
     if nli_verdict == "CONTRADICTION" or st == "расхождение":
+        if not ok and nli_item.get("conflicting_values"):
+            c_vals = extract_numbers(nli_item["conflicting_values"])
+            for fn, text in docs.items():
+                for sent in re.split(r"[.\n;]", text):
+                    sent_clean = sent.strip()
+                    if len(sent_clean) >= 15 and any(f" {int(cv)} " in f" {sent_clean} " or f"({int(cv)})" in sent_clean for cv in c_vals):
+                        ok_c, v_q_c, v_fn_c = recover_quote(sent_clean, docs)
+                        if ok_c:
+                            ok, valid_q, valid_fn = True, v_q_c, v_fn_c
+                            break
+                if ok:
+                    break
         if ok:
             if nli_item.get("conflicting_values"):
                 ans = nli_item["conflicting_values"]
