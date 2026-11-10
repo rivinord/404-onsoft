@@ -4,6 +4,7 @@
 !.env.example
 
 # Virtual environment
+venv
 venv/
 .venv/
 env/
@@ -25,3 +26,4 @@ __pycache__/
 # Temporary uploads and outputs
 uploads/
 *.tmp
+dual_stream_result.csv

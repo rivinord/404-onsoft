@@ -625,7 +625,13 @@ def resolve_consensus(q_text, docs, full_text, ext_item, nli_item):
 
 def answer_single_question(package_id, question_text, packages_dir=None):
     """Режим демонстрации живого вопроса для жюри с показом работы обоих потоков."""
-    packages_dir = Path(packages_dir or (DATA_DIR / "packages"))
+    if packages_dir is None or str(packages_dir) == str(DATA_DIR / "packages"):
+        if package_id.upper().startswith("K") and (HERE / "school21-onsoft-control" / "packages").exists():
+            packages_dir = HERE / "school21-onsoft-control" / "packages"
+        else:
+            packages_dir = DATA_DIR / "packages"
+    else:
+        packages_dir = Path(packages_dir)
     pkg_dir = packages_dir / package_id
     if not pkg_dir.exists():
         print(f"Ошибка: папка закупки {pkg_dir} не найдена!")
@@ -698,8 +704,8 @@ def main():
     parser.add_argument("--cache-nli", default=str(HERE / "dual_stream_nli_cache.json"), help="Кэш потока 2 (NLI)")
     parser.add_argument("--gold", default=str(DATA_DIR / "answers_public.json"), help="Путь к answers_public.json")
     parser.add_argument("--result", default=str(HERE / "dual_stream_result.csv"), help="CSV для чекера")
-    parser.add_argument("--package", help="ID закупки для одного вопроса")
-    parser.add_argument("--question", help="Текст одного вопроса для живой проверки")
+    parser.add_argument("-p", "--package", help="ID закупки для одного вопроса")
+    parser.add_argument("-q", "--question", help="Текст одного вопроса для живой проверки")
     parser.add_argument("--nli-all", action="store_true", help="Запускать NLI абсолютно для всех 71 вопросов")
     parser.add_argument("--no-cache", action="store_true", help="Игнорировать существующий кэш ответов")
     args = parser.parse_args()

@@ -34,6 +34,8 @@ from gigachat_client import GigaChatClient
 HERE = Path(__file__).resolve().parent
 DATA_DIR = HERE / "school21-onsoft-data"
 PACKAGES_DIR = DATA_DIR / "packages"
+CONTROL_DIR = HERE / "school21-onsoft-control"
+CONTROL_PACKAGES_DIR = CONTROL_DIR / "packages"
 
 st.set_page_config(
     page_title="ОНСОФТ: ИИ, который не обманывает",
@@ -239,7 +241,7 @@ with tab3:
 
     source_mode = st.radio(
         "Источник пакета документов закупки:",
-        ["📁 Выбрать готовую закупку из датасета (P01–P08)", "📦 Загрузить свой ZIP-архив закупки (.zip)"],
+        ["📁 Выбрать готовую закупку из датасета (P01–P08, K01–K09)", "📦 Загрузить свой ZIP-архив закупки (.zip)"],
         horizontal=True
     )
 
@@ -248,8 +250,10 @@ with tab3:
     chosen_pkg = ""
     can_proceed = True
 
-    if source_mode == "📁 Выбрать готовую закупку из датасета (P01–P08)":
-        available_pkgs = [p.name for p in sorted(PACKAGES_DIR.glob("P*")) if p.is_dir()]
+    if source_mode == "📁 Выбрать готовую закупку из датасета (P01–P08, K01–K09)":
+        p_pkgs = [p.name for p in sorted(PACKAGES_DIR.glob("P*")) if p.is_dir()]
+        k_pkgs = [p.name for p in sorted(CONTROL_PACKAGES_DIR.glob("K*")) if p.is_dir()] if CONTROL_PACKAGES_DIR.exists() else []
+        available_pkgs = p_pkgs + k_pkgs
         col_pkg, col_q_preset = st.columns([1, 2])
 
         with col_pkg:
@@ -267,6 +271,16 @@ with tab3:
                 "Требуется ли обеспечение гарантийных обязательств? Ответьте да или нет.",
                 "Не старше скольких дней должна быть выписка из ЕГРЮЛ?"
             ],
+            "K01": [
+                "Какая начальная (максимальная) цена контракта, в рублях?",
+                "Установлено ли ограничение участия в пользу малого бизнеса (только СМП и СОНКО)? Ответьте да или нет.",
+                "Какой срок выполнения работ, в календарных днях?"
+            ],
+            "K05": [
+                "Какая начальная (максимальная) цена контракта, в рублях?",
+                "Какой срок выполнения работ, в календарных днях?",
+                "Где выполняются работы: удалённо или у заказчика?"
+            ],
             "P06": [
                 "Какой гарантийный срок на результаты работ, в месяцах?",
                 "Сколько специалистов исполнитель обязан привлечь к работам?",
@@ -283,7 +297,7 @@ with tab3:
         else:
             user_question = st.text_input("Вопрос для проверки:", value="Какой срок выполнения работ, в календарных днях?")
 
-        pkg_dir = PACKAGES_DIR / chosen_pkg
+        pkg_dir = (CONTROL_PACKAGES_DIR / chosen_pkg) if chosen_pkg.startswith("K") else (PACKAGES_DIR / chosen_pkg)
         docs, full_text = load_package_docs(pkg_dir)
 
     else:
